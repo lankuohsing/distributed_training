@@ -15,6 +15,7 @@ import os
 
 
 def custom_dp_train(model, train_dataset, batch_size_per_device=32,output_dir="outputs/gpu/"):
+    os.makedirs(output_dir, exist_ok=True)
     from torch.nn import DataParallel as DP
     device_ids = [0, 1]
     model = DP(model, device_ids=device_ids)
