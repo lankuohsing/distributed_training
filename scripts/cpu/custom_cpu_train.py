@@ -8,6 +8,7 @@ from scripts.utils.model import CustomModel
 '''
 CPU训练
 只需要管理device即可
+PYTHONPATH=. python scripts/cpu/custom_cpu_train.py 2>&1 | tee cpu_train.log
 '''
 def custom_cpu_train(model, train_dataset, batch_size_per_device=32,output_dir="outputs/cpu/"):
     os.makedirs(output_dir,exist_ok=True)
@@ -25,3 +26,4 @@ if __name__ == '__main__':
     print(f'''
 time_cost: {end-start}
 ''')
+    # time_cost: 5.773849678225815

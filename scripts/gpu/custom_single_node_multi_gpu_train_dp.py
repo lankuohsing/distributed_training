@@ -6,6 +6,7 @@ from scripts.utils.model import CustomModel
 import os
 import time
 '''
+PYTHONPATH=. CUDA_VISIBLE_DEVICES=4,5 python scripts/gpu/custom_single_node_multi_gpu_train_dp.py  2>&1 | tee  dp_gpu_train.log
 多GPU训练
 采用DataParallel进行分布式计算。
 原理：当给定model时，主要实现功能是将input数据依据batch的这个维度，将数据平均划分到指定的设备（GPU）上。
@@ -36,3 +37,4 @@ if __name__ == '__main__':
 print(f'''
 time_cost: {end - start}
 ''')
+# 23.619675908237696
