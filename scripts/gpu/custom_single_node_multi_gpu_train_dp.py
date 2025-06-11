@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 from scripts.utils.data_utils import get_dataset
 from scripts.utils.model import CustomModel
 import os
+import time
 '''
 多GPU训练
 采用DataParallel进行分布式计算。
@@ -25,8 +26,13 @@ def custom_dp_train(model, train_dataset, batch_size_per_device=32,output_dir="o
 
 
 if __name__ == '__main__':
+    start=time.perf_counter()
     train_dataset = get_dataset()
     model = CustomModel(input_dim, hidden_dim, output_dim)
 
     # 单机多GPU简单训练
     custom_dp_train(model, train_dataset)
+    end = time.perf_counter()
+print(f'''
+time_cost: {end - start}
+''')

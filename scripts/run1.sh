@@ -1,0 +1,1 @@
+PYTHONPATH=. CUDA_VISIBLE_DEVICES=4,5 python scripts/gpu/custom_single_node_multi_gpu_train_dp.py  2>&1 | tee  gpu_train.log
