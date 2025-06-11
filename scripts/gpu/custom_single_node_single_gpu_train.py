@@ -8,7 +8,7 @@ import os
 单GPU训练
 只需要管理device即可
 '''
-def custom_gpu_train(model, train_dataset, batch_size_per_device=32,output_dir="outputs/cpu/"):
+def custom_gpu_train(model, train_dataset, batch_size_per_device=32,output_dir="outputs/gpu/"):
     os.makedirs(output_dir,exist_ok=True)
     train_loader = DataLoader(train_dataset, batch_size=batch_size_per_device, shuffle=True)
     train(model, train_loader, device='cuda:0',output_dir=output_dir)

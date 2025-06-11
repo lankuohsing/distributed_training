@@ -51,7 +51,7 @@ def train(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=
             optimizer.step()  # 更新参数
 
             # 打印训练信息
-            if (i + 1) % 10 == 0 and local_rank == 0:
+            if (i + 1) % 10 == 0 and local_rank == 0:# 在多进程训练中，只打印一个进程的log，避免日志重复混杂影响debug
                 print(f'Epoch [{epoch + 1}/{num_epochs}], Step [{i + 1}/{len(train_loader)}], Loss: {loss.item():.4f}')
 
     save_model(model, optimizer, epoch, loss, only_save_model,output_dir=output_dir)
