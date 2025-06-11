@@ -1,9 +1,8 @@
-from custom_train_base import train
-from config import input_dim, hidden_dim, output_dim, batch_size_per_device
+from scripts.utils.custom_train_base import train
+from scripts.utils.config import input_dim, hidden_dim, output_dim, batch_size_per_device
 from torch.utils.data import DataLoader
-from data_utils import get_dataset
-from model import CustomModel
-
+from scripts.utils.data_utils import get_dataset
+from scripts.utils.model import CustomModel
 '''
 CPU训练
 只需要管理device即可
