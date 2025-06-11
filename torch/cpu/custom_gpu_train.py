@@ -5,16 +5,16 @@ from data_utils import get_dataset
 from model import CustomModel
 
 '''
-CPU训练
+单GPU训练
 只需要管理device即可
 '''
-def custom_cpu_train(model, train_dataset, batch_size_per_device=32):
+def custom_gpu_train(model, train_dataset, batch_size_per_device=32):
     train_loader = DataLoader(train_dataset, batch_size=batch_size_per_device, shuffle=True)
-    train(model, train_loader, device='cpu')
+    train(model, train_loader, device='cuda:0')
 
 
 if __name__ == '__main__':
     train_dataset = get_dataset()
     model = CustomModel(input_dim, hidden_dim, output_dim)
     # CPU简单训练模型
-    custom_cpu_train(model, train_dataset, batch_size_per_device)
+    custom_gpu_train(model, train_dataset, batch_size_per_device)
