@@ -4,7 +4,7 @@ import torch.nn as nn
 from torch import optim
 
 
-def save_model(model, optimizer, epoch, loss, only_save_model):
+def save_model(model, optimizer, epoch, loss, only_save_model,output_dir="outputs"):
     '''
     不推荐使用torch.save(model, path)
     :param model:
@@ -16,7 +16,7 @@ def save_model(model, optimizer, epoch, loss, only_save_model):
     '''
     os.makedirs("outputs/", exist_ok=True)
     if only_save_model:
-        torch.save(model.state_dict(), f'outputs/only-model_epoch-{epoch}.pth')
+        torch.save(model.state_dict(), os.path.join(output_dir,f'only-model_epoch-{epoch}.pth'))
     else:
 
         checkpoint = {
@@ -24,11 +24,11 @@ def save_model(model, optimizer, epoch, loss, only_save_model):
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': loss.item()
         }
-        torch.save(checkpoint, f'outputs/checkpoint_epoch-{epoch}.pth')
+        torch.save(checkpoint, os.path.join(output_dir,f'outputs/checkpoint_epoch-{epoch}.pth'))
 
 
 def train(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=0,
-          only_save_model=True):
+          only_save_model=True,output_dir="outputs"):
     model = model.to(device)
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
@@ -54,4 +54,4 @@ def train(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=
             if (i + 1) % 10 == 0 and local_rank == 0:
                 print(f'Epoch [{epoch + 1}/{num_epochs}], Step [{i + 1}/{len(train_loader)}], Loss: {loss.item():.4f}')
 
-    save_model(model, optimizer, epoch, loss, only_save_model)
+    save_model(model, optimizer, epoch, loss, only_save_model,output_dir=output_dir)
