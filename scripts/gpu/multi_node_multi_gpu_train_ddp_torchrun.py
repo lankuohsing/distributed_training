@@ -62,7 +62,7 @@ def ddp_train(train_dataset, batch_size_per_device=32, output_dir="outputs/ddp/"
         model,
         train_loader,
         device=local_rank,
-        local_rank=local_rank,
+        global_rank=rank,
         output_dir=output_dir
     )
 

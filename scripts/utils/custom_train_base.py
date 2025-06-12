@@ -108,7 +108,8 @@ def train(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', global_rank
             labels = batch['labels'].to(device)
 
             # 前向传播
-            outputs = model(inputs)
+            model_result = model(inputs, labels)
+            outputs = model_result['outputs']
             loss = criterion(outputs, labels)
 
             # 反向传播
