@@ -11,12 +11,12 @@ from scripts.utils.data_utils import get_dataset
 from scripts.utils.model import CustomModel
 from scripts.utils.custom_train_base import train
 '''
-PYTHONPATH=. CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node=2 scripts/gpu/custom_single_node_multi_gpu_train_dp.py  2>&1 | tee  ddp_gpu_train.log
+PYTHONPATH=. CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node=2 --master_port=12345 scripts/gpu/custom_single_node_multi_gpu_train_dp.py  2>&1 | tee  ddp_gpu_train.log
 
 '''
 def setup_for_ddp(local_rank, world_size):
-    os.environ['MASTER_ADDR'] = 'localhost'
-    os.environ['MASTER_PORT'] = '12345'  # 确保端口没被占用
+    # os.environ['MASTER_ADDR'] = 'localhost'
+    # os.environ['MASTER_PORT'] = '12345'  # 确保端口没被占用
 
     dist.init_process_group("nccl", rank=local_rank, world_size=world_size)
     torch.cuda.set_device(local_rank)
