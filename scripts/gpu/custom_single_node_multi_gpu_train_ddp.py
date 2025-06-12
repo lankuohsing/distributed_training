@@ -64,11 +64,12 @@ if __name__ == '__main__':
     start = time.perf_counter()
     train_dataset = get_dataset()
     world_size = 2  # 使用两个GPU
-
+    output_dir="outputs/ddp/"
+    os.makedirs(output_dir,exist_ok=True)
     # 启动多进程训练
     mp.spawn(
         ddp_train,
-        args=(world_size, train_dataset, batch_size_per_device, "outputs/gpu/"),
+        args=(world_size, train_dataset, batch_size_per_device, output_dir),
         nprocs=world_size,
         join=True
     )
