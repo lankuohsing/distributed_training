@@ -57,4 +57,4 @@ if __name__ == '__main__':
     gold_w = torch.randn(input_dim, output_dim)
     gold_b = torch.randn(output_dim)
     y_train = torch.matmul(x_train, gold_w) + gold_b
-    torch.save({'x_train': x_train, 'y_train': y_train}, '../cpu/data/train_data.pt')
+    torch.save({'x_train': x_train, 'y_train': y_train}, 'datasets/train_data.pt')
