@@ -24,10 +24,12 @@ class CustomDataset(Dataset):
 def get_dataset(data_num=10000):
     data_path = '/opt/data2/languoxing/datasets/train_data.pt'
     if os.path.exists(data_path):
+        print(f'{data_path} exists! load data from disk')
         data_dict = torch.load(data_path)
         x_train = data_dict['x_train']
         y_train = data_dict['y_train']
     else:
+        print(f'{data_path} not exists! generate data randomly')
         x_train = torch.randn(data_num, input_dim)
         gold_w = torch.randn(input_dim, output_dim)
         gold_b = torch.randn(output_dim)
