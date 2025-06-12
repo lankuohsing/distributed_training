@@ -15,7 +15,7 @@ PYTHONPATH=. torchrun \
     --rdzv_id=12345 \            # 唯一作业ID
     --rdzv_backend=c10d \        # 后端
     --rdzv_endpoint=localhost:0 \# 主节点地址（localhost表示单机）
-    scripts/gpu/custom_single_node_multi_gpu_train_ddp.py 2>&1 | tee ddp_torchrun.log
+    scripts/gpu/single_node_multi_gpu_train_ddp_torchrun.py 2>&1 | tee ddp_torchrun.log
 '''
 def ddp_train(train_dataset, batch_size_per_device=32, output_dir="outputs/ddp/"):
     # 从环境变量获取分布式信息
