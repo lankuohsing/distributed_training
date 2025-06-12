@@ -22,4 +22,4 @@ torchrun \
     --node_rank=1 \
     --master_addr=$MASTER_ADDR \
     --master_port=$MASTER_PORT \
-    scripts/gpu/single_node_multi_gpu_train_ddp_torchrun.py 2>&1 | tee worker.log
+    scripts/gpu/multi_node_multi_gpu_train_ddp_torchrun.py 2>&1 | tee worker.log
