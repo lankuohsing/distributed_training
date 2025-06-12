@@ -10,7 +10,7 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 
 '''
-PYTHONPATH=. CUDA_VISIBLE_DEVICES=4,5 python scripts/gpu/custom_single_node_multi_gpu_train_ddp.py  2>&1 | tee  ddp_gpu_train.log
+PYTHONPATH=. CUDA_VISIBLE_DEVICES=4,5 python scripts/gpu/single_node_multi_gpu_train_ddp_spawn.py  2>&1 | tee  ddp_gpu_train.log
 
 '''
 def ddp_train(rank, world_size, train_dataset, batch_size_per_device=32, output_dir="outputs/gpu/"):
@@ -76,3 +76,4 @@ if __name__ == '__main__':
 
     end = time.perf_counter()
     print(f'time_cost: {end - start}')
+    # 47.47289187926799
