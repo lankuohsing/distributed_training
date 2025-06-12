@@ -1,5 +1,5 @@
 import torch
-from scripts.utils.custom_train_base import train
+from scripts.utils.custom_train_base import train1
 from scripts.utils.config import input_dim, hidden_dim, output_dim, batch_size_per_device
 from torch.utils.data import DataLoader
 from scripts.utils.data_utils import get_dataset
@@ -53,7 +53,7 @@ def ddp_train(train_dataset, batch_size_per_device=32, output_dir="outputs/ddp/"
     )
 
     # 执行训练
-    train(
+    train1(
         model,
         train_loader,
         device=local_rank,
