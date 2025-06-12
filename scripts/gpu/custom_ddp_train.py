@@ -45,9 +45,39 @@ def custom_ddp_train(model, train_dataset, batch_size_per_device=32,output_dir="
              nprocs=num_gpus_per_node,
              join=True)
 
-if __name__ == '__main__':
-    train_dataset = get_dataset()
-    model = CustomModel(input_dim, hidden_dim, output_dim)
 
-    # 单机多GPU简单训练
-    custom_ddp_train(model, train_dataset)
+# 新的主函数（示例）
+def main():
+    # 自动获取环境变量
+    local_rank = int(os.environ["LOCAL_RANK"])  # torchrun自动注入
+    global_rank = int(os.environ["RANK"])
+    world_size = int(os.environ["WORLD_SIZE"])
+
+    # 初始化分布式
+    dist.init_process_group(backend="nccl")
+
+    # 模型准备
+    device = f"cuda:{local_rank}"
+    model = CustomModel(input_dim, hidden_dim, output_dim).to(device)
+    model = DDP(model, device_ids=[local_rank])
+
+    # 数据加载
+    train_dataset = get_dataset()
+    sampler = DistributedSampler(
+        train_dataset,
+        num_replicas=world_size,
+        rank=global_rank,
+        shuffle=True  # 建议显式指定shuffle
+    )
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=batch_size_per_device,
+        sampler=sampler
+    )
+
+    # 训练
+    train(model, train_loader, device=device, local_rank=local_rank)
+
+
+if __name__ == "__main__":
+    main()
