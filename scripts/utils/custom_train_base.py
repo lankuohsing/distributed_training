@@ -65,11 +65,13 @@ def train(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=
     model.train()
 
     for epoch in range(num_epochs):
-        train_loader.sampler.set_epoch(epoch)  # 重要：保证每个epoch的shuffle不同
+        # 设置分布式sampler的epoch（确保数据shuffle正确）
+        if hasattr(train_loader, 'sampler') and isinstance(train_loader.sampler, torch.utils.data.distributed.DistributedSampler):
+            train_loader.sampler.set_epoch(epoch)
 
         for i, batch in enumerate(train_loader):
-            inputs = batch['inputs'].to(device, non_blocking=True)
-            labels = batch['labels'].to(device, non_blocking=True)
+            inputs = batch['inputs'].to(device)
+            labels = batch['labels'].to(device)
 
             # 前向传播
             model_result = model(inputs, labels)
@@ -81,10 +83,10 @@ def train(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=
             loss.backward()
             optimizer.step()
 
-            # 只在主进程打印日志
+            # 仅主进程打印日志
             if (i + 1) % 10 == 0 and local_rank == 0:
-                print(f'Epoch [{epoch + 1}/{num_epochs}], Step [{i + 1}/{len(train_loader)}], Loss: {loss.item():.4f}')
+                print(f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(train_loader)}], Loss: {loss.item():.4f}')
 
-    # 只在主进程保存模型
+    # 仅主进程保存模型（注意保存原始模型）
     if local_rank == 0:
-        save_model(model.module, optimizer, num_epochs, loss, only_save_model, output_dir=output_dir)
+        save_model(model.module, optimizer, epoch, loss, only_save_model, output_dir=output_dir)(model.module, optimizer, num_epochs, loss, only_save_model, output_dir=output_dir)
