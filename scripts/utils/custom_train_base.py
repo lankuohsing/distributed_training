@@ -57,7 +57,7 @@ def train0(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank
     save_model(model, optimizer, epoch, loss, only_save_model,output_dir=output_dir)
 
 
-def train(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=0,
+def train1(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=0,
           only_save_model=True, output_dir="outputs"):
     model = model.to(device)
     criterion = nn.MSELoss()
@@ -89,4 +89,38 @@ def train(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=
 
     # 仅主进程保存模型（注意保存原始模型）
     if local_rank == 0:
+        save_model(model.module, optimizer, epoch, loss, only_save_model, output_dir=output_dir)
+
+def train(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', global_rank=0,
+          only_save_model=True, output_dir="outputs"):
+    model = model.to(device)
+    criterion = nn.MSELoss()
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    model.train()
+
+    for epoch in range(num_epochs):
+        # 设置分布式sampler的epoch
+        if hasattr(train_loader, 'sampler') and hasattr(train_loader.sampler, 'set_epoch'):
+            train_loader.sampler.set_epoch(epoch)
+
+        for i, batch in enumerate(train_loader):
+            inputs = batch['inputs'].to(device)
+            labels = batch['labels'].to(device)
+
+            # 前向传播
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+
+            # 反向传播
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            # 仅主进程打印日志
+            if (i + 1) % 10 == 0 and global_rank == 0:
+                print(f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(train_loader)}], Loss: {loss.item():.4f}')
+
+    # 仅全局 rank 0 保存模型
+    if global_rank == 0:
+        # 保存原始模型（非DDP包装）
         save_model(model.module, optimizer, epoch, loss, only_save_model, output_dir=output_dir)
