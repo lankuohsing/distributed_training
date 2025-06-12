@@ -13,7 +13,10 @@ def _ddp_train(local_rank, world_size, model, train_dataset, num_gpus_per_node=N
     num_gpus_per_node = num_gpus_per_node if num_gpus_per_node is not None else torch.cuda.device_count()
     global_rank = node_rank * num_gpus_per_node + local_rank
     #初始化分布式环境，init_method='env://'表示使用环境变量来初始化进程组
-    dist.init_process_group(backend='nccl', init_method='env://', rank=global_rank, world_size=world_size)
+    dist.init_process_group(backend='nccl',
+                            init_method='env://',  # 显式指定主节点地址
+                            rank=global_rank,
+                            world_size=world_size)
 
     device = f'cuda:{local_rank}'
     model = model.to(device) #如果模型不在GPU卡上，无法对其进行封装
