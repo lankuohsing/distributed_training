@@ -78,3 +78,4 @@ if __name__ == '__main__':
     # 只在 rank 0 打印时间
     if int(os.environ.get('RANK', 0)) == 0:
         print(f'time_cost: {end - start}')
+    # 14.761768782045692
