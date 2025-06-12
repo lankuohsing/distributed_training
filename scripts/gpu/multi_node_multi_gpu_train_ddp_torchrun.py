@@ -9,13 +9,31 @@ import time
 import torch.distributed as dist
 
 '''
-PYTHONPATH=. torchrun \
-    --nnodes=1 \                # 节点数量（单机）
-    --nproc_per_node=2 \         # 每节点进程数（GPU数）
-    --rdzv_id=12345 \            # 唯一作业ID
-    --rdzv_backend=c10d \        # 后端
-    --rdzv_endpoint=localhost:0 \# 主节点地址（localhost表示单机）
-    scripts/gpu/single_node_multi_gpu_train_ddp_torchrun.py 2>&1 | tee ddp_torchrun.log
+#!/bin/bash
+export MASTER_ADDR="10.205.92.13"
+export MASTER_PORT=29500
+export WORLD_SIZE=4
+export PYTHONPATH=.
+
+# 关键 NCCL 设置
+export NCCL_DEBUG=INFO
+export NCCL_IB_DISABLE=1
+export NCCL_SOCKET_IFNAME=bond0  # 替换为你的实际接口
+export NCCL_BLOCKING_WAIT=1
+
+# 显示网络信息
+echo "Master starting at $(hostname) - $(date)"
+ip addr
+ifconfig
+
+# 启动训练
+torchrun \
+    --nnodes=2 \
+    --nproc_per_node=2 \
+    --node_rank=0 \# master为0，其他则为正整数
+    --master_addr=$MASTER_ADDR \
+    --master_port=$MASTER_PORT \
+    scripts/gpu/multi_node_multi_gpu_train_ddp_torchrun.py 2>&1 | tee master.log
 '''
 def ddp_train(train_dataset, batch_size_per_device=32, output_dir="outputs/ddp/"):
     # 从环境变量获取分布式信息
@@ -83,4 +101,4 @@ if __name__ == '__main__':
     # 只在 rank 0 打印时间
     if int(os.environ.get('RANK', 0)) == 0:
         print(f'time_cost: {end - start}')
-    # 14.761768782045692
+    # 8.757532767951488
