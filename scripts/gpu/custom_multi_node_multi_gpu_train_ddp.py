@@ -49,16 +49,13 @@ def ddp_train(rank, world_size, output_dir="outputs/ddp/"):
 
 
 if __name__ == '__main__':
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--rank', type=int, required=True, help='Global rank of the process')
-    parser.add_argument('--world_size', type=int, required=True, help='Total number of processes')
-    args = parser.parse_args()
+    # 从环境变量获取rank和world_size
+    rank = int(os.environ["RANK"])
+    world_size = int(os.environ["WORLD_SIZE"])
 
     start_time = time.perf_counter()
-    ddp_train(args.rank, args.world_size)
+    ddp_train(rank, world_size)
 
-    if args.rank == 0:  # 只在主节点输出时间
+    if rank == 0:
         end_time = time.perf_counter()
         print(f'\nTotal time: {end_time - start_time:.2f} seconds\n')
