@@ -89,4 +89,4 @@ def train(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=
 
     # 仅主进程保存模型（注意保存原始模型）
     if local_rank == 0:
-        save_model(model.module, optimizer, epoch, loss, only_save_model, output_dir=output_dir)(model.module, optimizer, num_epochs, loss, only_save_model, output_dir=output_dir)
+        save_model(model.module, optimizer, epoch, loss, only_save_model, output_dir=output_dir)
