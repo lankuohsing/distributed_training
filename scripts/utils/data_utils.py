@@ -22,7 +22,7 @@ class CustomDataset(Dataset):
         return {'inputs': self.x[idx], 'labels': self.y[idx]}
 
 def get_dataset(data_num=10000):
-    data_path = './train_data.pt'
+    data_path = '/opt/data2/languoxing/datasets/train_data.pt'
     if os.path.exists(data_path):
         data_dict = torch.load(data_path)
         x_train = data_dict['x_train']
