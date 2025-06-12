@@ -1,7 +1,6 @@
 import os
 import time
 import torch
-import torch.nn as nn
 import torch.distributed as dist
 from torch.utils.data import DataLoader, DistributedSampler
 from torch.nn.parallel import DistributedDataParallel as DDP
@@ -12,7 +11,6 @@ from scripts.utils.model import CustomModel
 
 
 def setup_ddp(rank, world_size, master_addr='10.205.58.30', master_port='12355'):
-    # 初始化进程组
     os.environ['MASTER_ADDR'] = master_addr
     os.environ['MASTER_PORT'] = master_port
     dist.init_process_group("nccl", rank=rank, world_size=world_size)
@@ -25,31 +23,26 @@ def cleanup_ddp():
 def ddp_train(rank, world_size, output_dir="outputs/ddp/"):
     os.makedirs(output_dir, exist_ok=True)
 
-    # DDP初始化
+    local_rank = int(os.environ["LOCAL_RANK"])  # 关键修改点
     setup_ddp(rank, world_size)
-    torch.cuda.set_device(rank)  # 每个进程绑定到自己的GPU
+    torch.cuda.set_device(local_rank)  # 使用本地GPU索引
 
-    # 模型和数据
-    model = CustomModel(input_dim, hidden_dim, output_dim).to(rank)
-    model = DDP(model, device_ids=[rank])
+    model = CustomModel(input_dim, hidden_dim, output_dim).to(local_rank)
+    model = DDP(model, device_ids=[local_rank])
 
-    # 分布式Sampler
     train_dataset = get_dataset()
     sampler = DistributedSampler(train_dataset, num_replicas=world_size, rank=rank, shuffle=True)
-    batch_size = 32  # 每个GPU的batch size
+    batch_size = 32
     train_loader = DataLoader(train_dataset, batch_size=batch_size, sampler=sampler)
 
-    # 训练（只在rank 0记录输出）
     if rank == 0:
         print(f"Training on {world_size} nodes with {torch.cuda.device_count()} GPUs per node")
 
-    train(model, train_loader, device=rank, output_dir=output_dir)
-
+    train(model, train_loader, device=local_rank, output_dir=output_dir)
     cleanup_ddp()
 
 
 if __name__ == '__main__':
-    # 从环境变量获取rank和world_size
     rank = int(os.environ["RANK"])
     world_size = int(os.environ["WORLD_SIZE"])
 
