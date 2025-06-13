@@ -27,8 +27,11 @@ def save_model(model, optimizer, epoch, loss, only_save_model,output_dir="output
         torch.save(checkpoint, os.path.join(output_dir,f'outputs/checkpoint_epoch-{epoch}.pth'))
 
 
-def train0(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=0,
-          only_save_model=True,output_dir="outputs"):
+def train_single_device(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=0,
+                        only_save_model=True, output_dir="outputs"):
+    '''
+    CPU或者单GPU都适用
+    '''
     model = model.to(device)
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
@@ -57,8 +60,8 @@ def train0(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank
     save_model(model, optimizer, epoch, loss, only_save_model,output_dir=output_dir)
 
 
-def train1(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=0,
-          only_save_model=True, output_dir="outputs"):
+def train_single_node(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=0,
+                      only_save_model=True, output_dir="outputs"):
     model = model.to(device)
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)

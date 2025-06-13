@@ -1,6 +1,6 @@
 import os
 import time
-from scripts.utils.custom_train_base import train0
+from scripts.utils.custom_train_base import train_single_device
 from scripts.utils.config import input_dim, hidden_dim, output_dim, batch_size_per_device
 from torch.utils.data import DataLoader
 from scripts.utils.data_utils import get_dataset
@@ -13,7 +13,7 @@ PYTHONPATH=. python scripts/cpu/custom_cpu_train.py 2>&1 | tee cpu_train.log
 def custom_cpu_train(model, train_dataset, batch_size_per_device=32,output_dir="outputs/cpu/"):
     os.makedirs(output_dir,exist_ok=True)
     train_loader = DataLoader(train_dataset, batch_size=batch_size_per_device, shuffle=True)
-    train0(model, train_loader, device='cpu',output_dir=output_dir)
+    train_single_device(model, train_loader, device='cpu', output_dir=output_dir)
 
 
 if __name__ == '__main__':
