@@ -35,7 +35,7 @@ def train_single_device(model, train_loader, lr=1e-3, num_epochs=20, device='cpu
     model = model.to(device)
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
-    model.train_multi_node()  # 设置模型为训练模式
+    model.train()  # 设置模型为训练模式
     for epoch in range(num_epochs):
         for i, batch in enumerate(train_loader):
             inputs = batch['inputs'].to(device)
@@ -65,7 +65,7 @@ def train_single_node(model, train_loader, lr=1e-3, num_epochs=20, device='cpu',
     model = model.to(device)
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
-    model.train_multi_node()
+    model.train()
 
     for epoch in range(num_epochs):
         # 设置分布式sampler的epoch（确保数据shuffle正确）
