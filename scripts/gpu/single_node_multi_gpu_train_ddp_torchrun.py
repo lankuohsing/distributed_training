@@ -51,7 +51,7 @@ def ddp_train(train_dataset, batch_size_per_device=32, output_dir="outputs/ddp/"
         train_dataset,
         batch_size=batch_size_per_device,
         sampler=sampler,
-        shuffle=False,
+        shuffle=False,#多卡任务时，这里必须为False。由DistributedSampler类负责每个epoch的打乱
         num_workers=4,
         pin_memory=True
     )

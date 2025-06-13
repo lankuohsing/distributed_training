@@ -40,6 +40,9 @@ def ddp_train(train_dataset, batch_size_per_device=32, output_dir="outputs/ddp/"
     print(f"Initializing process group: rank={os.environ['RANK']}, "
           f"local_rank={os.environ['LOCAL_RANK']}, "
           f"world_size={os.environ['WORLD_SIZE']}")
+    '''
+    WORLD_SIZE = nnodes * nproc_per_node
+    '''
     rank = int(os.environ['RANK'])
     local_rank = int(os.environ['LOCAL_RANK'])
     world_size = int(os.environ['WORLD_SIZE'])

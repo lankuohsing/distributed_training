@@ -29,7 +29,7 @@ CUDA_VISIBLE_DEVICES=4,5 PYTHONPATH=. torchrun \
 ```
 
 ## 多节点多GPU(ddp)
-master: 
+master(10.205.92.13): 
 ```commandline
 #!/bin/bash
 export MASTER_ADDR="10.205.92.13"
@@ -61,7 +61,7 @@ torchrun \
     scripts/gpu/multi_node_multi_gpu_train_ddp_torchrun.py 2>&1 | tee master.log
 ```
 
-worker:
+worker(10.205.58.30):
 ```commandline
 #!/bin/bash
 export MASTER_ADDR="10.205.92.13"

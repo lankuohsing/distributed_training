@@ -1,7 +1,7 @@
 #!/bin/bash
 export MASTER_ADDR="10.205.92.13"
 export MASTER_PORT=29500
-export WORLD_SIZE=4
+# export WORLD_SIZE=4
 export PYTHONPATH=.
 
 # 关键 NCCL 设置
