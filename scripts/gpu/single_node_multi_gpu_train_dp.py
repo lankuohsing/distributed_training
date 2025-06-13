@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # 单机多GPU简单训练
     custom_dp_train(model, train_dataset)
     end = time.perf_counter()
-print(f'''
+    print(f'''
 time_cost: {end - start}
 ''')
 # 23.619675908237696
