@@ -41,6 +41,14 @@ def ddp_train(train_dataset, batch_size_per_device=32, output_dir="outputs/ddp/"
           f"local_rank={os.environ['LOCAL_RANK']}, "
           f"world_size={os.environ['WORLD_SIZE']}")
     '''
+    master上打印：
+    Initializing process group: rank=1, local_rank=1, world_size=4
+    Initializing process group: rank=0, local_rank=0, world_size=4
+    worker上打印：
+    Initializing process group: rank=2, local_rank=0, world_size=4
+    Initializing process group: rank=3, local_rank=1, world_size=4
+    '''
+    '''
     WORLD_SIZE = nnodes * nproc_per_node
     RANK = node_rank * nproc_per_node + LOCAL_RANK
     LOCAL_RANK: 当前节点内的进程编号（范围：0 到 nproc_per_node - 1）。
