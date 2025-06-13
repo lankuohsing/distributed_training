@@ -8,7 +8,7 @@ import os
 '''
 单GPU训练
 只需要管理device即可
-PYTHONPATH=. CUDA_VISIBLE_DEVICES=4 python scripts/gpu/custom_single_node_multi_gpu_train_dp.py  2>&1 | tee  gpu_train.log
+PYTHONPATH=. CUDA_VISIBLE_DEVICES=4 python scripts/gpu/single_node_single_gpu_train.py  2>&1 | tee  gpu_train.log
 '''
 def custom_gpu_train(model, train_dataset, batch_size_per_device=32,output_dir="outputs/gpu/"):
     os.makedirs(output_dir,exist_ok=True)
