@@ -1,4 +1,4 @@
-from scripts.utils.custom_train_base import train_single_device
+from scripts.utils.custom_train_base import train_single_node
 from scripts.utils.config import input_dim, hidden_dim, output_dim, batch_size_per_device
 from torch.utils.data import DataLoader
 from scripts.utils.data_utils import get_dataset
@@ -23,7 +23,7 @@ def custom_dp_train(model, train_dataset, batch_size_per_device=32,output_dir="o
     model = DP(model, device_ids=device_ids)
     batch_size = batch_size_per_device * len(device_ids)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    train_single_device(model, train_loader, device=device_ids[0], output_dir=output_dir)
+    train_single_node(model, train_loader, device=device_ids[0], output_dir=output_dir)
 
 
 if __name__ == '__main__':
