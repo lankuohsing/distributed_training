@@ -16,6 +16,10 @@ CUDA_VISIBLE_DEVICES=4,5 PYTHONPATH=. torchrun \
     --rdzv_backend=c10d \
     --rdzv_endpoint=localhost:0 \
     scripts/gpu/single_node_multi_gpu_train_ddp_torchrun.py 2>&1 | tee ddp_torchrun.log
+
+模型只需要在各个设备间复制一次。
+DDP采用多进程控制多GPU，共同训练模型，一份代码会被pytorch自动分配到n个进程并在n个GPU上运行。 
+DDP运用Ring-Reduce通信算法在每个GPU间对梯度进行通讯，交换彼此的梯度，从而获得所有GPU的梯度，然后各自GPU对应的进程上的模型更新梯度。
 '''
 def ddp_train(train_dataset, batch_size_per_device=32, output_dir="outputs/ddp/"):
     # 从环境变量获取分布式信息
