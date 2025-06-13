@@ -24,7 +24,7 @@ def save_model(model, optimizer, epoch, loss, only_save_model,output_dir="output
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': loss.item()
         }
-        torch.save(checkpoint, os.path.join(output_dir,f'outputs/checkpoint_epoch-{epoch}.pth'))
+        torch.save(checkpoint, os.path.join(output_dir,f'checkpoint_epoch-{epoch}.pth'))
 
 
 def train_single_device(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', local_rank=0,
