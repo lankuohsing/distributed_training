@@ -42,6 +42,9 @@ def ddp_train(train_dataset, batch_size_per_device=32, output_dir="outputs/ddp/"
           f"world_size={os.environ['WORLD_SIZE']}")
     '''
     WORLD_SIZE = nnodes * nproc_per_node
+    RANK = node_rank * nproc_per_node + LOCAL_RANK
+    LOCAL_RANK: 当前节点内的进程编号（范围：0 到 nproc_per_node - 1）。
+    CUDA_VISIBLE_DEVICES=4,5 → LOCAL_RANK=0 使用 GPU4，LOCAL_RANK=1 使用 GPU5。
     '''
     rank = int(os.environ['RANK'])
     local_rank = int(os.environ['LOCAL_RANK'])
