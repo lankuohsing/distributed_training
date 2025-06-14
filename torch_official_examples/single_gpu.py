@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from datautils import MyTrainDataset
-
+import time
 
 class Trainer:
     def __init__(
@@ -78,6 +78,8 @@ if __name__ == "__main__":
     parser.add_argument('--save_every', default=10,type=int, help='How often to save a snapshot')
     parser.add_argument('--batch_size', default=32, type=int, help='Input batch size on each device (default: 32)')
     args = parser.parse_args()
-
+    start=time.perf_counter()
     device = 0  # shorthand for cuda:0
     main(device, args.total_epochs, args.save_every, args.batch_size)
+    end = time.perf_counter()
+    print(f'''time_cost: {end - start}''')

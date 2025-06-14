@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from datautils import MyTrainDataset
-
+import time
 import torch.multiprocessing as mp
 from torch.utils.data.distributed import DistributedSampler
 from torch.nn.parallel import DistributedDataParallel as DDP
@@ -99,6 +99,8 @@ if __name__ == "__main__":
     parser.add_argument('--save_every', default=10, type=int, help='How often to save a snapshot')
     parser.add_argument('--batch_size', default=32, type=int, help='Input batch size on each device (default: 32)')
     args = parser.parse_args()
-
+    start=time.perf_counter()
     world_size = torch.cuda.device_count()
     mp.spawn(main, args=(world_size, args.save_every, args.total_epochs, args.batch_size), nprocs=world_size)
+    end = time.perf_counter()
+    print(f'''time_cost: {end - start}''')

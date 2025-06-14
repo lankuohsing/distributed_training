@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from datautils import MyTrainDataset
-
+import time
 
 class Trainer:
     def __init__(
@@ -81,4 +81,7 @@ if __name__ == "__main__":
 
     device = 0  # shorthand for cuda:0
     device='cpu'
+    start=time.perf_counter()
     main(device, args.total_epochs, args.save_every, args.batch_size)
+    end=time.perf_counter()
+    print(f'''time_cost: {end-start}''')
