@@ -96,6 +96,17 @@ def train_single_node(model, train_loader, lr=1e-3, num_epochs=20, device='cpu',
 
 def train_multi_node(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', global_rank=0,
                      only_save_model=True, output_dir="outputs"):
+    '''
+    :param model:
+    :param train_loader:
+    :param lr:
+    :param num_epochs:
+    :param device: 实际传入的值是local_rank
+    :param global_rank:
+    :param only_save_model:
+    :param output_dir:
+    :return:
+    '''
     model = model.to(device)
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
@@ -105,7 +116,10 @@ def train_multi_node(model, train_loader, lr=1e-3, num_epochs=20, device='cpu', 
         # 设置分布式sampler的epoch
         if hasattr(train_loader, 'sampler') and hasattr(train_loader.sampler, 'set_epoch'):
             train_loader.sampler.set_epoch(epoch)
-
+            '''
+            每个epoch重置采样器的随机种子,并确保不同进程获取不同的数据划分
+            由DistributedSampler来shuffle，创建DataLoader时shuffle参数应该为False
+            '''
         for i, batch in enumerate(train_loader):
             inputs = batch['inputs'].to(device)
             labels = batch['labels'].to(device)

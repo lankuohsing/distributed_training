@@ -63,7 +63,7 @@ def ddp_train(train_dataset, batch_size_per_device=32, output_dir="outputs/ddp/"
         backend='nccl',
         init_method='env://'
     )
-    dist.barrier()
+    dist.barrier()# 进程同步屏障：所有进程执行到此处时会互相等待，直到全部进程都到达该屏障后才会继续执行后续代码。
     if int(os.environ.get('RANK', 0)) == 0:
         print("All processes joined the process group")
     torch.cuda.set_device(local_rank)
@@ -84,7 +84,7 @@ def ddp_train(train_dataset, batch_size_per_device=32, output_dir="outputs/ddp/"
         train_dataset,
         batch_size=batch_size_per_device,
         sampler=sampler,
-        shuffle=False,
+        shuffle=False,# ddp模式（多设备）下，这里必须为False，
         num_workers=4,
         pin_memory=True
     )
