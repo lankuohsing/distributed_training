@@ -9,6 +9,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
 import os
 '''
+CUDA_VISIBLE_DEVICES=4,5 torchrun --standalone --nproc_per_node=2 multigpu_torchrun.py 50 10
 PyTorch offers a utility called torchrun that provides fault-tolerance and elastic training. 
 When a failure occurs, torchrun logs the errors and attempts to automatically restart all the processes from the last saved “snapshot” of the training job.
 '''
