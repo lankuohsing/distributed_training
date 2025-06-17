@@ -83,3 +83,4 @@ if __name__ == "__main__":
     main(device, args.total_epochs, args.save_every, args.batch_size)
     end = time.perf_counter()
     print(f'''time_cost: {end - start}''')
+    # 10.47
