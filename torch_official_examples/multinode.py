@@ -8,11 +8,7 @@ from torch.utils.data.distributed import DistributedSampler
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
 import os
-'''
-CUDA_VISIBLE_DEVICES=4,5 torchrun --standalone --nproc_per_node=2 multigpu_torchrun.py 50 10
-PyTorch offers a utility called torchrun that provides fault-tolerance and elastic training. 
-When a failure occurs, torchrun logs the errors and attempts to automatically restart all the processes from the last saved “snapshot” of the training job.
-'''
+
 
 def ddp_setup():
     torch.cuda.set_device(int(os.environ["LOCAL_RANK"]))
@@ -27,8 +23,9 @@ class Trainer:
         save_every: int,
         snapshot_path: str,
     ) -> None:
-        self.gpu_id = int(os.environ["LOCAL_RANK"])# torchrun会自动设置环境变量LOCAL_RANK
-        self.model = model.to(self.gpu_id)
+        self.local_rank = int(os.environ["LOCAL_RANK"])# 由torch预先设置
+        self.global_rank = int(os.environ["RANK"])# 由torch预先设置
+        self.model = model.to(self.local_rank)
         self.train_data = train_data
         self.optimizer = optimizer
         self.save_every = save_every
@@ -38,10 +35,10 @@ class Trainer:
             print("Loading snapshot")
             self._load_snapshot(snapshot_path)
 
-        self.model = DDP(self.model, device_ids=[self.gpu_id])
+        self.model = DDP(self.model, device_ids=[self.local_rank])
 
     def _load_snapshot(self, snapshot_path):
-        loc = f"cuda:{self.gpu_id}"
+        loc = f"cuda:{self.local_rank}"
         snapshot = torch.load(snapshot_path, map_location=loc)
         self.model.load_state_dict(snapshot["MODEL_STATE"])
         self.epochs_run = snapshot["EPOCHS_RUN"]
@@ -56,18 +53,17 @@ class Trainer:
 
     def _run_epoch(self, epoch):
         b_sz = len(next(iter(self.train_data))[0])
-        print(f"[GPU{self.gpu_id}] Epoch {epoch} | Batchsize: {b_sz} | Steps: {len(self.train_data)}")
+        print(f"[GPU{self.global_rank}] Epoch {epoch} | Batchsize: {b_sz} | Steps: {len(self.train_data)}")
         self.train_data.sampler.set_epoch(epoch)
         for source, targets in self.train_data:
-            source = source.to(self.gpu_id)
-            targets = targets.to(self.gpu_id)
+            source = source.to(self.local_rank)
+            targets = targets.to(self.local_rank)
             self._run_batch(source, targets)
 
     def _save_snapshot(self, epoch):
-        # 不仅要保存模型本身，还要保存训练状态以便
         snapshot = {
-            "MODEL_STATE": self.model.module.state_dict(),#模型参数
-            "EPOCHS_RUN": epoch,#已经训了多少个epoch。其实还不够，还得存储训练数据的状态信息吧
+            "MODEL_STATE": self.model.module.state_dict(),
+            "EPOCHS_RUN": epoch,
         }
         torch.save(snapshot, self.snapshot_path)
         print(f"Epoch {epoch} | Training snapshot saved at {self.snapshot_path}")
@@ -75,13 +71,13 @@ class Trainer:
     def train(self, max_epochs: int):
         for epoch in range(self.epochs_run, max_epochs):
             self._run_epoch(epoch)
-            if self.gpu_id == 0 and epoch % self.save_every == 0:
+            if self.global_rank == 0 and epoch % self.save_every == 0:
                 self._save_snapshot(epoch)
 
 
 def load_train_objs():
-    train_set = MyTrainDataset(20480)  # load your dataset
-    model = torch.nn.Linear(200, 1)  # load your model
+    train_set = MyTrainDataset(2048)  # load your dataset
+    model = torch.nn.Linear(20, 1)  # load your model
     optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
     return train_set, model, optimizer
 
