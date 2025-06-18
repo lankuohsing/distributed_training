@@ -1,5 +1,5 @@
 CUDA_VISIBLE_DEVICES=4,5 torchrun \
---nproc_per_node=4 \
+--nproc_per_node=2 \
 --nnodes=2 \
 --node_rank=0 \
 --rdzv_id=456 \
