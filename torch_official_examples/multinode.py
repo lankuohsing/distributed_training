@@ -12,6 +12,10 @@ import os
 
 def ddp_setup():
     torch.cuda.set_device(int(os.environ["LOCAL_RANK"]))
+    # 添加网络诊断信息
+    print(f"[RANK {os.environ['RANK']}] MASTER_ADDR: {os.getenv('MASTER_ADDR')}")
+    print(f"[RANK {os.environ['RANK']}] MASTER_PORT: {os.getenv('MASTER_PORT')}")
+    print(f"[RANK {os.environ['RANK']}] Using backend: nccl")
     init_process_group(backend="nccl",
         init_method="tcp://10.205.92.13:29603",
         world_size=int(os.environ["WORLD_SIZE"]),
