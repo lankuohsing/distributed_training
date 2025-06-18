@@ -1,4 +1,5 @@
 #!/bin/bash
+export TORCH_DISTRIBUTED_PORT_RANGE="29500-30000"
 export GLOO_SOCKET_IFNAME=bond0  # 使用bond0接口
 export NCCL_SOCKET_IFNAME=bond0   # 使用bond0接口
 
