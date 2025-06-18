@@ -22,8 +22,6 @@ CUDA_VISIBLE_DEVICES=0,1 torchrun \
 --node_rank=1 \
 --rdzv_id=456 \
 --rdzv_backend=c10d \
---master_addr=$MASTER_ADDR \
---master_port=$MASTER_PORT \
 --rdzv_endpoint=10.205.92.13:29603 \
 --rdzv_conf is_host_name=false \
 multinode.py 50 10 2>&1 | tee worker.log
